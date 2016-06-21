@@ -11,7 +11,7 @@
 
   	
    	
-   	<<bean id="amqConnectionFactory" class="io.fabric8.mq.core.MQConnectionFactory">
+   	<bean id="amqConnectionFactory" class="io.fabric8.mq.core.MQConnectionFactory">
    		<property name="userName" value="admin"/>
 		<property name="password" value="admin"/>
 	</bean>
@@ -24,7 +24,21 @@
   	</bean>
   
   	<camelContext xmlns="http://camel.apache.org/schema/spring">
-  	<route/>
+  	<route id="callBRMS">
+    <from uri="activemq:queue:WEIGHTWATCHER"/>
+    <convertBodyTo type="java.lang.String"/>
+    <log message="The message from QUEUE ${body}"/>
+    <setHeader headerName="CamelHttpMethod">
+      <constant>POST</constant>
+    </setHeader>
+    <setHeader headerName="CamelHttpPath">
+      <constant>/</constant>
+    </setHeader>
+  </route>
+  <route id="parsedata">
+  	<from uri="direct:parsedata"/>
+    <log message="The message from BRMS ${body}"/>
+  </route>
 </camelContext>
 
 </beans>

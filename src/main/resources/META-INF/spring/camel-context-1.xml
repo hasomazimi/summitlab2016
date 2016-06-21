@@ -23,21 +23,24 @@
   
   	<bean id="beanCreator" class="com.redhat.weightwatcher.workingbean.BeanCreator" />
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-  	
+  
   <route id="addParticipant">
     <from uri="direct:addParticipant"/>
     <bean ref="beanCreator" method="addParticipant(${headers.userid},${headers.username})"/>
     <marshal>
       <json library="Jackson"/>
     </marshal>
-    <bean ref="beanCreator" method="setParticipantFactJson(${headers.userid},${body})" />
+    <bean ref="beanCreator" method="setParticipantFactJson(${headers.userid},${body})"/>
     <bean ref="beanCreator" method="addGoal(${headers.userid},${headers.target},${headers.start},${headers.low},${headers.high})"/>
     <marshal>
       <json library="Jackson"/>
     </marshal>
-    <bean ref="beanCreator" method="setGoalFactJson(${headers.userid},${body})" />
+    <bean ref="beanCreator" method="setGoalFactJson(${headers.userid},${body})"/>
   </route>
-  
+  <route id="updateweight">
+    <from uri="direct:updateweight"/>
+    <log message="${body}"/>
+  </route>
 </camelContext>
 
 </beans>
