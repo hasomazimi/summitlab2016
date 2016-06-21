@@ -23,16 +23,7 @@
   
   	<bean id="beanCreator" class="com.redhat.weightwatcher.workingbean.BeanCreator" />
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-  	<restConfiguration component="jetty" port="9191" bindingMode="json"/>
-  
-  	<rest path="/weightwatcher">
-	    <get uri="/addParticipant/{userid}/{username}/{target}/{start}/{low}/{high}">
-	      <to uri="direct:addParticipant"/>
-	    </get>
-	    <get uri="/updateweight/{userid}/{obsDate}/{obsvalue}">
-	      <to uri="direct:updateweight"/>
-	    </get>
-	</rest>
+  	
   <route id="addParticipant">
     <from uri="direct:addParticipant"/>
     <bean ref="beanCreator" method="addParticipant(${headers.userid},${headers.username})"/>
@@ -46,17 +37,7 @@
     </marshal>
     <bean ref="beanCreator" method="setGoalFactJson(${headers.userid},${body})" />
   </route>
-  <route id="updateweight">
-    <from uri="direct:updateweight"/>
-    <bean ref="beanCreator" method="addObservation(${headers.userid},${headers.obsDate},${headers.obsvalue})"/>
-    <marshal>
-      <json library="Jackson"/>
-    </marshal>
-    <log message="${body}" />
-    <bean ref="beanCreator" method="setObservationFactJson(${headers.userid},${body})" />
-    <bean ref="beanCreator" method="createSessionContent(${headers.userid})" />
-    <to uri="activemq:queue:WEIGHTWATCHER"/>
-  </route>
+  
 </camelContext>
 
 </beans>
